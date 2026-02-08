@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes";
 import aiRoutes from "./routes/ai.routes";
@@ -9,8 +11,6 @@ import activityRoutes from "./routes/activity.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import dailyActivityRoutes from "./routes/dailyActivity.routes";
 import { errorHandler } from "./middleware/errorHandler";
-
-dotenv.config();
 
 const app = express();
 

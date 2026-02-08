@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
 export interface IActivity {
   goalId: string;
@@ -12,38 +12,23 @@ export interface IActivity {
   updatedAt: Date;
 }
 
-const ActivitySchema = new Schema(
+const ActivitySchema = new mongoose.Schema(
   {
     goalId: { type: String, required: true },
     title: { type: String, required: true },
-
-    estimatedMinutes: {
-      type: Number,
-      required: true,
-    },
-
-    spentMinutes: {
-      type: Number,
-      default: 0, // ✅ critical
-    },
-
-    completed: {
-      type: Boolean,
-      default: false, // ✅ critical
-    },
-
-    lastUpdated: {
-      type: String,
-    },
-
+    estimatedMinutes: { type: Number, required: true },
+    spentMinutes: { type: Number, default: 0 },
+    completed: { type: Boolean, default: false },
+    lastUpdated: { type: String },
     userId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, collection: "activities" }
 );
 
-export default model<IActivity>("Activity", ActivitySchema);
+const Activity = mongoose.model<IActivity>("Activity", ActivitySchema);
+export default Activity;

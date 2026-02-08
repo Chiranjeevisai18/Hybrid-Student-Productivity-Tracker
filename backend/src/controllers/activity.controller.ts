@@ -43,7 +43,7 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
 export const getAllActivities = async (req: AuthRequest, res: Response) => {
   try {
     const activities = await Activity.find({
-      userId: req.userId,
+      userId: new mongoose.Types.ObjectId(req.userId as string),
     });
 
     res.json(activities);
@@ -71,7 +71,7 @@ export const getActivitiesByGoal = async (
 
     const activities = await Activity.find({
       goalId,
-      userId: req.userId,
+      userId: new mongoose.Types.ObjectId(req.userId as string),
     });
 
     res.json(activities);

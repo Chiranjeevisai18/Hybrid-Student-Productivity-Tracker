@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
 export interface IGoal {
   title: string;
@@ -12,25 +12,23 @@ export interface IGoal {
   updatedAt: Date;
 }
 
-const GoalSchema = new Schema(
+const GoalSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     category: { type: String, required: true },
     type: { type: String, required: true },
-
-    progress: { type: Number, default: 0 }, // ✅ frontend-safe
-
+    progress: { type: Number, default: 0 },
     startDate: { type: String, required: true },
     endDate: { type: String, required: true },
-
     userId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, collection: "goals" }
 );
 
-export default model<IGoal>("Goal", GoalSchema);
+const Goal = mongoose.model<IGoal>("Goal", GoalSchema);
+export default Goal;

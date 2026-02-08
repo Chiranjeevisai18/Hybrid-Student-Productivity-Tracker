@@ -41,7 +41,9 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
 ========================= */
 export const getGoals = async (req: AuthRequest, res: Response) => {
   try {
-    const goals = await Goal.find({ userId: req.userId });
+    const goals = await Goal.find({
+      userId: new mongoose.Types.ObjectId(req.userId as string)
+    });
     res.json(goals);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
