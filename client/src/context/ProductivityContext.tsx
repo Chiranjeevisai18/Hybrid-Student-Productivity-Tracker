@@ -7,6 +7,7 @@ import {
 import type { Goal } from "../types/goals";
 import type { Activity } from "../types/activity";
 import { apiFetch } from "../api/client";
+import { useAuth } from "./AuthContext";
 
 /* =========================
    CONTEXT TYPE
@@ -70,10 +71,18 @@ export const ProductivityProvider = ({
   const [goals, setGoals] = useState<Goal[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
 
+  const { user } = useAuth();
+
   /* =========================
      INITIAL FETCH
   ========================= */
   useEffect(() => {
+    if (!user) {
+      setGoals([]);
+      setActivities([]);
+      return;
+    }
+
     apiFetch("/goals")
       .then((data) => setGoals(data.map(normalizeGoal)))
       .catch(console.error);
@@ -81,7 +90,7 @@ export const ProductivityProvider = ({
     apiFetch("/activities")
       .then((data) => setActivities(data.map(normalizeActivity)))
       .catch(console.error);
-  }, []);
+  }, [user]);
 
   /* =========================
      GOAL ACTIONS
@@ -218,7 +227,7 @@ export const ProductivityProvider = ({
     streak: 6,
     productivityScore: Math.round(
       goals.reduce((acc, g) => acc + g.progress, 0) /
-        (goals.length || 1)
+      (goals.length || 1)
     ),
 
     goals,

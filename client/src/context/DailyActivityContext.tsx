@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
+import { useAuth } from "./AuthContext";
 import type { DailyActivity } from "../types/dailyActivity";
 
 type ContextType = {
@@ -16,7 +17,14 @@ export const DailyActivityProvider = ({ children }: { children: React.ReactNode 
   const [pendingDelete, setPendingDelete] = useState<DailyActivity | null>(null);
 
 
+  const { user } = useAuth();
+
   useEffect(() => {
+    if (!user) {
+      setActivities([]);
+      return;
+    }
+
     apiFetch("/daily-activities")
       .then((data) =>
         setActivities(
@@ -27,7 +35,7 @@ export const DailyActivityProvider = ({ children }: { children: React.ReactNode 
         )
       )
       .catch(console.error);
-  }, []);
+  }, [user]);
 
   const addActivity = async (data: Omit<DailyActivity, "id">) => {
     const created = await apiFetch("/daily-activities", {
