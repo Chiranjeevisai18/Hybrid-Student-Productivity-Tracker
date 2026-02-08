@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Access the backend URL from environment variables or default to localhost
-const API_URL = "http://localhost:8000/api/ai";
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000/api") + "/ai";
 
 const getHeaders = () => {
     const token = localStorage.getItem("token");
