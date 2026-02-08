@@ -7,10 +7,10 @@ type Props = {
 
 const LogoutConfirmModal = ({ onConfirm, onCancel }: Props) => {
   return (
-    <div className="fixed inset-0 z-50  flex justify-center py-50 px-4 lg:px-0 items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-0">
       {/* Overlay */}
       <div
-        className="absolute inset-0 bg-white/80 dark:bg-black/60 backdrop-blur-sm transition-colors duration-300"
+        className="absolute inset-0 bg-black/40 dark:bg-black/90 backdrop-blur-sm transition-colors duration-300"
         onClick={onCancel}
       />
 
