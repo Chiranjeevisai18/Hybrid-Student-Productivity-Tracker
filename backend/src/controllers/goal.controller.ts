@@ -2,6 +2,8 @@ import { Response } from "express";
 import Goal from "../models/Goal";
 import { AuthRequest } from "../middleware/auth";
 import Activity from "../models/Activity";
+import redis from "../config/redis";
+import mongoose from "mongoose";
 
 
 /* =========================
@@ -25,6 +27,9 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
       progress: 0, // frontend-safe default
     });
 
+    // Invalidate Analytics Cache
+    await redis.del(`analytics:${req.userId}`);
+
     res.status(201).json(goal);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -36,7 +41,13 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
 ========================= */
 export const getGoals = async (req: AuthRequest, res: Response) => {
   try {
-    const goals = await Goal.find({ userId: req.userId });
+    // ROBUST QUERY: handle transition from String to ObjectId if necessary
+    const goals = await Goal.find({
+      $or: [
+        { userId: req.userId },
+        { userId: new mongoose.Types.ObjectId(req.userId as string) }
+      ]
+    });
     res.json(goals);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -54,7 +65,7 @@ export const updateGoal = async (req: AuthRequest, res: Response) => {
     }
 
     // Ownership check
-    if (goal.userId!== req.userId) {
+    if (goal.userId.toString() !== req.userId!.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
@@ -75,6 +86,9 @@ export const updateGoal = async (req: AuthRequest, res: Response) => {
     });
 
     await goal.save();
+
+    // Invalidate Analytics Cache
+    await redis.del(`analytics:${req.userId}`);
 
     res.json(goal);
   } catch (err: any) {
@@ -97,7 +111,7 @@ export const deleteGoal = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "Goal not found" });
     }
 
-    if (goal.userId !== req.userId) {
+    if (goal.userId.toString() !== req.userId!.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
@@ -106,6 +120,9 @@ export const deleteGoal = async (req: AuthRequest, res: Response) => {
 
     // 3️⃣ Delete goal
     await Goal.findByIdAndDelete(goalId);
+
+    // Invalidate Analytics Cache
+    await redis.del(`analytics:${req.userId}`);
 
     res.json({ message: "Goal and related activities deleted" });
   } catch (err: any) {

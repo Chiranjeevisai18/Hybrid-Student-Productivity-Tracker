@@ -4,6 +4,7 @@ import Goal from "../models/Goal";
 import Activity from "../models/Activity";
 
 import redis from "../config/redis";
+import mongoose from "mongoose";
 
 export const getAnalytics = async (req: AuthRequest, res: Response) => {
   try {
@@ -16,10 +17,20 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
     }
 
     // Fetch all goals
-    const goals = await Goal.find({ userId });
+    const goals = await Goal.find({
+      $or: [
+        { userId },
+        { userId: new mongoose.Types.ObjectId(userId as string) }
+      ]
+    });
 
     // Fetch all activities
-    const activities = await Activity.find({ userId });
+    const activities = await Activity.find({
+      $or: [
+        { userId },
+        { userId: new mongoose.Types.ObjectId(userId as string) }
+      ]
+    });
 
     // Total activity duration
     const totalMinutes = activities.reduce((sum, a) => sum + (a.spentMinutes || 0), 0);

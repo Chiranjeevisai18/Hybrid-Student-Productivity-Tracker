@@ -2,6 +2,8 @@ import { Response } from "express";
 import Activity from "../models/Activity";
 import Goal from "../models/Goal";
 import { AuthRequest } from "../middleware/auth";
+import redis from "../config/redis";
+import mongoose from "mongoose";
 
 /* =========================
    CREATE ACTIVITY
@@ -13,7 +15,7 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
     const goal = await Goal.findById(goalId);
     if (!goal) return res.status(404).json({ message: "Goal not found" });
 
-    if (goal.userId !== req.userId) {
+    if (goal.userId.toString() !== req.userId!.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
@@ -25,6 +27,9 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
       spentMinutes: 0,
       completed: false,
     });
+
+    // Invalidate Analytics Cache
+    await redis.del(`analytics:${req.userId}`);
 
     res.status(201).json(activity);
   } catch (err: any) {
@@ -38,7 +43,10 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
 export const getAllActivities = async (req: AuthRequest, res: Response) => {
   try {
     const activities = await Activity.find({
-      userId: req.userId,
+      $or: [
+        { userId: req.userId },
+        { userId: new mongoose.Types.ObjectId(req.userId as string) }
+      ]
     });
 
     res.json(activities);
@@ -60,7 +68,7 @@ export const getActivitiesByGoal = async (
     const goal = await Goal.findById(goalId);
     if (!goal) return res.status(404).json({ message: "Goal not found" });
 
-    if (goal.userId !== req.userId) {
+    if (goal.userId.toString() !== req.userId!.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
@@ -84,7 +92,7 @@ export const updateActivity = async (req: AuthRequest, res: Response) => {
     if (!activity)
       return res.status(404).json({ message: "Activity not found" });
 
-    if (activity.userId !== req.userId) {
+    if (activity.userId.toString() !== req.userId!.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
@@ -104,6 +112,9 @@ export const updateActivity = async (req: AuthRequest, res: Response) => {
 
       await user.save();
       console.log(`Awarded ${earnedXP} XP to user ${user.name}`);
+
+      // Invalidate Analytics Cache
+      await redis.del(`analytics:${req.userId}`);
     }
 
     res.json(updated);
@@ -121,11 +132,14 @@ export const deleteActivity = async (req: AuthRequest, res: Response) => {
     if (!activity)
       return res.status(404).json({ message: "Activity not found" });
 
-    if (activity.userId !== req.userId) {
+    if (activity.userId.toString() !== req.userId!.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
     await Activity.findByIdAndDelete(req.params.id);
+
+    // Invalidate Analytics Cache
+    await redis.del(`analytics:${req.userId}`);
 
     res.json({ message: "Activity deleted" });
   } catch (err: any) {
