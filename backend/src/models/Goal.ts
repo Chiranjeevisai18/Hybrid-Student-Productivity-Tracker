@@ -23,7 +23,12 @@ const GoalSchema = new Schema(
     startDate: { type: String, required: true },
     endDate: { type: String, required: true },
 
-    userId: { type: String }, // later
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );

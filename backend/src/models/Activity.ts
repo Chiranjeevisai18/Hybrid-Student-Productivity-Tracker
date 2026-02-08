@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
 
 export interface IActivity {
-    goalId: string;
-    title: string;
-    estimatedMinutes: number;
-    spentMinutes: number;
-    completed: boolean;
-    lastUpdated?: string;
-    userId: string;
-    createdAt: Date;
-    updatedAt: Date;
+  goalId: string;
+  title: string;
+  estimatedMinutes: number;
+  spentMinutes: number;
+  completed: boolean;
+  lastUpdated?: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const ActivitySchema = new Schema(
@@ -36,7 +36,12 @@ const ActivitySchema = new Schema(
       type: String,
     },
 
-    userId: { type: String },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );
