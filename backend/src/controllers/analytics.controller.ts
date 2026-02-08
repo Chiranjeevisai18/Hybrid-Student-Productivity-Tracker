@@ -10,14 +10,17 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
 
-    // Check Cache (Graceful fallback)
+    // Check Cache (Strict Timeout to prevent hanging)
     try {
-      const cached = await redis.get(`analytics:${userId}`);
+      const cached = await Promise.race([
+        redis.get(`analytics:${userId}`),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 1500))
+      ]);
       if (cached) {
-        return res.json(JSON.parse(cached));
+        return res.json(JSON.parse(cached as string));
       }
     } catch (cacheErr) {
-      console.warn("Analytics Cache Fetch Failed:", cacheErr);
+      console.warn("Analytics Cache Skip (Healthy Fallback):", (cacheErr as Error).message);
     }
 
     // Fetch all goals

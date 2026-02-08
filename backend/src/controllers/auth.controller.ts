@@ -73,14 +73,17 @@ export const login = async (req: Request, res: Response) => {
 ========================= */
 export const me = async (req: AuthRequest, res: Response) => {
   try {
-    // Check Cache (Graceful)
+    // Check Cache (Strict Timeout)
     try {
-      const cachedUser = await redis.get(`user:${req.userId}`);
+      const cachedUser = await Promise.race([
+        redis.get(`user:${req.userId}`),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 1500))
+      ]);
       if (cachedUser) {
-        return res.json(JSON.parse(cachedUser));
+        return res.json(JSON.parse(cachedUser as string));
       }
     } catch (cacheErr) {
-      console.warn("User Cache Fetch Failed:", cacheErr);
+      console.warn("User Cache Skip:", (cacheErr as Error).message);
     }
 
     const user = await User.findById(req.userId).select("-password -__v");
