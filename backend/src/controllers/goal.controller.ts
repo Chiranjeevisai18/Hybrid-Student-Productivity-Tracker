@@ -27,8 +27,12 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
       progress: 0, // frontend-safe default
     });
 
-    // Invalidate Analytics Cache
-    await redis.del(`analytics:${req.userId}`);
+    // Invalidate Analytics Cache (Graceful)
+    try {
+      if (req.userId) await redis.del(`analytics:${req.userId}`);
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Invalidation Failed:", cacheErr);
+    }
 
     res.status(201).json(goal);
   } catch (err: any) {
@@ -81,8 +85,12 @@ export const updateGoal = async (req: AuthRequest, res: Response) => {
 
     await goal.save();
 
-    // Invalidate Analytics Cache
-    await redis.del(`analytics:${req.userId}`);
+    // Invalidate Analytics Cache (Graceful)
+    try {
+      if (req.userId) await redis.del(`analytics:${req.userId}`);
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Invalidation Failed:", cacheErr);
+    }
 
     res.json(goal);
   } catch (err: any) {
@@ -115,8 +123,12 @@ export const deleteGoal = async (req: AuthRequest, res: Response) => {
     // 3️⃣ Delete goal
     await Goal.findByIdAndDelete(goalId);
 
-    // Invalidate Analytics Cache
-    await redis.del(`analytics:${req.userId}`);
+    // Invalidate Analytics Cache (Graceful)
+    try {
+      if (req.userId) await redis.del(`analytics:${req.userId}`);
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Invalidation Failed:", cacheErr);
+    }
 
     res.json({ message: "Goal and related activities deleted" });
   } catch (err: any) {

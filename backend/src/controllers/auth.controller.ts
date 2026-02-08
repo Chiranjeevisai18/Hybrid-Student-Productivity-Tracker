@@ -73,17 +73,25 @@ export const login = async (req: Request, res: Response) => {
 ========================= */
 export const me = async (req: AuthRequest, res: Response) => {
   try {
-    // Check Cache
-    const cachedUser = await redis.get(`user:${req.userId}`);
-    if (cachedUser) {
-      return res.json(JSON.parse(cachedUser));
+    // Check Cache (Graceful)
+    try {
+      const cachedUser = await redis.get(`user:${req.userId}`);
+      if (cachedUser) {
+        return res.json(JSON.parse(cachedUser));
+      }
+    } catch (cacheErr) {
+      console.warn("User Cache Fetch Failed:", cacheErr);
     }
 
     const user = await User.findById(req.userId).select("-password -__v");
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Set Cache (Expire in 1 hour)
-    await redis.set(`user:${req.userId}`, JSON.stringify(user), "EX", 3600);
+    // Set Cache (Expire in 1 hour) (Graceful)
+    try {
+      await redis.set(`user:${req.userId}`, JSON.stringify(user), "EX", 3600);
+    } catch (cacheErr) {
+      console.warn("User Cache Save Failed:", cacheErr);
+    }
 
     res.json(user);
   } catch (err: any) {
@@ -112,9 +120,13 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Invalidate Cache
-    await redis.del(`user:${req.userId}`);
-    await redis.set(`user:${req.userId}`, JSON.stringify(updatedUser), "EX", 3600);
+    // Invalidate Cache (Graceful)
+    try {
+      await redis.del(`user:${req.userId}`);
+      await redis.set(`user:${req.userId}`, JSON.stringify(updatedUser), "EX", 3600);
+    } catch (cacheErr) {
+      console.warn("User Cache Invalidation Failed:", cacheErr);
+    }
 
     res.json(updatedUser);
   } catch (error: any) {

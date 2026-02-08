@@ -10,10 +10,14 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
 
-    // Check Cache
-    const cached = await redis.get(`analytics:${userId}`);
-    if (cached) {
-      return res.json(JSON.parse(cached));
+    // Check Cache (Graceful fallback)
+    try {
+      const cached = await redis.get(`analytics:${userId}`);
+      if (cached) {
+        return res.json(JSON.parse(cached));
+      }
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Fetch Failed:", cacheErr);
     }
 
     // Fetch all goals
@@ -73,8 +77,12 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
       productivityScore,
     };
 
-    // Cache for 5 minutes
-    await redis.set(`analytics:${userId}`, JSON.stringify(result), "EX", 300);
+    // Cache for 5 minutes (Graceful)
+    try {
+      await redis.set(`analytics:${userId}`, JSON.stringify(result), "EX", 300);
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Save Failed:", cacheErr);
+    }
 
     res.json(result);
   } catch (err: any) {

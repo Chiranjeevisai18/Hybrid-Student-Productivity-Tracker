@@ -28,8 +28,12 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
       completed: false,
     });
 
-    // Invalidate Analytics Cache
-    await redis.del(`analytics:${req.userId}`);
+    // Invalidate Analytics Cache (Graceful)
+    try {
+      if (req.userId) await redis.del(`analytics:${req.userId}`);
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Invalidation Failed:", cacheErr);
+    }
 
     res.status(201).json(activity);
   } catch (err: any) {
@@ -110,8 +114,12 @@ export const updateActivity = async (req: AuthRequest, res: Response) => {
       await user.save();
       console.log(`Awarded ${earnedXP} XP to user ${user.name}`);
 
-      // Invalidate Analytics Cache
-      await redis.del(`analytics:${req.userId}`);
+      // Invalidate Analytics Cache (Graceful)
+      try {
+        if (req.userId) await redis.del(`analytics:${req.userId}`);
+      } catch (cacheErr) {
+        console.warn("Analytics Cache Invalidation Failed:", cacheErr);
+      }
     }
 
     res.json(updated);
@@ -135,8 +143,12 @@ export const deleteActivity = async (req: AuthRequest, res: Response) => {
 
     await Activity.findByIdAndDelete(req.params.id);
 
-    // Invalidate Analytics Cache
-    await redis.del(`analytics:${req.userId}`);
+    // Invalidate Analytics Cache (Graceful)
+    try {
+      if (req.userId) await redis.del(`analytics:${req.userId}`);
+    } catch (cacheErr) {
+      console.warn("Analytics Cache Invalidation Failed:", cacheErr);
+    }
 
     res.json({ message: "Activity deleted" });
   } catch (err: any) {
