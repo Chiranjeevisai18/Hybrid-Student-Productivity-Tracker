@@ -214,7 +214,7 @@ export const ProductivityProvider = ({
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activities]);
+  }, [activities, goals]);
 
   /* =========================
      CONTEXT VALUE
