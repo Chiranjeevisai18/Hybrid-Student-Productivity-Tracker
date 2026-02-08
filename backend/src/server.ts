@@ -3,10 +3,19 @@ import connectDB from "./config/db";
 import dotenv from "dotenv";
 
 dotenv.config();
-connectDB();
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server", err);
+    process.exit(1);
+  }
+};
+
+startServer();
