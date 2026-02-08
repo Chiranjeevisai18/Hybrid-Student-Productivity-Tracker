@@ -43,10 +43,7 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
 export const getAllActivities = async (req: AuthRequest, res: Response) => {
   try {
     const activities = await Activity.find({
-      $or: [
-        { userId: req.userId },
-        { userId: new mongoose.Types.ObjectId(req.userId as string) }
-      ]
+      userId: req.userId,
     });
 
     res.json(activities);

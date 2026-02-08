@@ -41,13 +41,7 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
 ========================= */
 export const getGoals = async (req: AuthRequest, res: Response) => {
   try {
-    // ROBUST QUERY: handle transition from String to ObjectId if necessary
-    const goals = await Goal.find({
-      $or: [
-        { userId: req.userId },
-        { userId: new mongoose.Types.ObjectId(req.userId as string) }
-      ]
-    });
+    const goals = await Goal.find({ userId: req.userId });
     res.json(goals);
   } catch (err: any) {
     res.status(500).json({ error: err.message });

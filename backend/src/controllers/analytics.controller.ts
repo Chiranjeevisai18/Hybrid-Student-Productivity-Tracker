@@ -17,20 +17,10 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
     }
 
     // Fetch all goals
-    const goals = await Goal.find({
-      $or: [
-        { userId },
-        { userId: new mongoose.Types.ObjectId(userId as string) }
-      ]
-    });
+    const goals = await Goal.find({ userId });
 
     // Fetch all activities
-    const activities = await Activity.find({
-      $or: [
-        { userId },
-        { userId: new mongoose.Types.ObjectId(userId as string) }
-      ]
-    });
+    const activities = await Activity.find({ userId });
 
     // Total activity duration
     const totalMinutes = activities.reduce((sum, a) => sum + (a.spentMinutes || 0), 0);
