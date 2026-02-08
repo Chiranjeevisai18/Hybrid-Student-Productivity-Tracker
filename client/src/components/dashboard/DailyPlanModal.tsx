@@ -72,7 +72,7 @@ const DailyPlanModal = ({ onClose }: Props) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-0">
             {/* Overlay */}
             <div
-                className="absolute inset-0 bg-white/80 dark:bg-black/60 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-black/40 dark:bg-black/90 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             />
 
@@ -98,9 +98,9 @@ const DailyPlanModal = ({ onClose }: Props) => {
                                 components={{
                                     ul: ({ node, ...props }) => <ul className="space-y-3 pl-0" {...props} />,
                                     li: ({ node, ...props }) => (
-                                        <li className="flex gap-4 items-start text-gray-800 dark:text-gray-100 bg-surfaceElevated p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-colors" {...props}>
+                                        <li className="flex gap-4 items-start text-textPrimary bg-cardElevated p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-colors" {...props}>
                                             <div className="mt-1 w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-                                            <div className="flex-1 [&>p]:m-0 leading-relaxed">{props.children}</div>
+                                            <div className="flex-1 [&>p]:m-0 leading-relaxed text-textSecondary">{props.children}</div>
                                         </li>
                                     ),
                                     strong: ({ node, ...props }) => <strong className="text-primary font-bold" {...props} />

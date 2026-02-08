@@ -43,10 +43,10 @@ const AddActivityModal = ({ onClose }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-center pt-24 pb-75">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-0">
       {/* Overlay */}
       <div
-        className="absolute inset-0 bg-white/80 dark:bg-black/60 backdrop-blur-sm transition-colors duration-300"
+        className="absolute inset-0 bg-black/40 dark:bg-black/90 backdrop-blur-sm transition-colors duration-300"
         onClick={onClose}
       />
 
