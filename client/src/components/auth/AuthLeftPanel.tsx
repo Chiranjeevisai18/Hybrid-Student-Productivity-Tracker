@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const AuthLeftPanel = () => {
   return (
-    <div className="relative flex h-full w-full items-center justify-center bg-slate800 overflow-hidden">
+    <div className="relative flex h-full w-full items-center justify-center bg-slate-900 overflow-hidden">
 
       {/* Background glow */}
       <div className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-aiBlue/20 blur-3xl" />
@@ -24,7 +24,7 @@ const AuthLeftPanel = () => {
           with clarity and structure.
         </p>
 
-        <div className="mt-10 rounded-xl border border-aiBlue/30 bg-slate900/60 p-6 backdrop-blur">
+        <div className="mt-10 rounded-xl border border-aiBlue/30 bg-slate-800/60 p-6 backdrop-blur">
           <p className="text-sm text-aiBlue font-semibold mb-2">
             AI-Powered Insights
           </p>

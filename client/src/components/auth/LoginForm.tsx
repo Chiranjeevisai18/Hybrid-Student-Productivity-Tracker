@@ -28,12 +28,12 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md rounded-3xl border border-aiBlue/30 bg-[#0B0F14] p-10 shadow-[0_0_60px_rgba(56,189,248,0.25)]">
+    <div className="w-full max-w-md rounded-3xl border border-border bg-card p-10 shadow-glow">
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-semibold text-white">
+        <h2 className="text-2xl font-semibold text-textPrimary">
           Welcome back
         </h2>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-textSecondary">
           Login to continue tracking your productivity.
         </p>
       </div>
@@ -46,7 +46,7 @@ const LoginForm = () => {
 
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
-          <label className="mb-1 block text-sm text-slate-300">
+          <label className="mb-1 block text-sm text-textSecondary">
             Email
           </label>
           <input
@@ -54,12 +54,12 @@ const LoginForm = () => {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg bg-[#020617] px-4 py-2.5 text-sm text-white ring-1 ring-white/10 focus:ring-blue-400"
+            className="w-full rounded-lg bg-surfaceElevated px-4 py-2.5 text-sm text-textPrimary ring-1 ring-border focus:ring-blue-500 outline-none"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm text-slate-300">
+          <label className="mb-1 block text-sm text-textSecondary">
             Password
           </label>
           <input
@@ -67,22 +67,22 @@ const LoginForm = () => {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg bg-[#020617] px-4 py-2.5 text-sm text-white ring-1 ring-white/10 focus:ring-blue-400"
+            className="w-full rounded-lg bg-surfaceElevated px-4 py-2.5 text-sm text-textPrimary ring-1 ring-border focus:ring-blue-500 outline-none"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-6 w-full rounded-lg bg-blue-500 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] disabled:opacity-60"
+          className="mt-6 w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-60 transition-all"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-slate-400">
+      <div className="mt-6 text-center text-sm text-textSecondary">
         Don’t have an account?{" "}
-        <Link to="/register" className="text-blue-400 hover:underline">
+        <Link to="/register" className="text-blue-500 hover:underline">
           Sign up
         </Link>
       </div>

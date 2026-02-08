@@ -52,7 +52,7 @@ const GoalDetails = () => {
 
   if (!goal) {
     return (
-      <div className="p-6 text-center text-slate-400">
+      <div className="p-6 text-center text-textSecondary">
         Goal not found 🚫
       </div>
     );

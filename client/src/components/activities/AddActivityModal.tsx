@@ -30,17 +30,17 @@ const AddActivityModal = ({ goalId, onClose }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-black/60 backdrop-blur-sm">
       <div
         className="
-          fade-in 
+          fade-in
           w-full max-w-md rounded-2xl
-          border border-aiBlue/30
-          bg-[#0B0F14] p-6
-          shadow-[0_0_30px_rgba(59,130,246,0.25)]
+          bg-card p-6
+          shadow-glow
+          border border-border
         "
       >
-        <h2 className="text-lg font-semibold text-white">
+        <h2 className="text-lg font-semibold text-textPrimary">
           Add Activity
         </h2>
 
@@ -52,9 +52,11 @@ const AddActivityModal = ({ goalId, onClose }: Props) => {
             onChange={(e) => setTitle(e.target.value)}
             className="
               w-full rounded-lg
-              border border-white/10
-              bg-black/40 px-3 py-2
-              text-white
+              border border-border
+              bg-surfaceElevated px-3 py-2
+              text-textPrimary
+              placeholder-textMuted
+              focus:outline-none focus:ring-1 focus:ring-primary
             "
           />
 
@@ -68,9 +70,10 @@ const AddActivityModal = ({ goalId, onClose }: Props) => {
             }
             className="
               w-full rounded-lg
-              border border-white/10
-              bg-black/40 px-3 py-2
-              text-white
+              border border-border
+              bg-surfaceElevated px-3 py-2
+              text-textPrimary
+              focus:outline-none focus:ring-1 focus:ring-primary
             "
           />
         </div>
@@ -78,7 +81,7 @@ const AddActivityModal = ({ goalId, onClose }: Props) => {
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="text-sm text-slate-400 hover:text-white"
+            className="text-sm text-textSecondary hover:text-textPrimary transition-colors"
           >
             Cancel
           </button>
@@ -86,9 +89,11 @@ const AddActivityModal = ({ goalId, onClose }: Props) => {
           <button
             onClick={handleSubmit}
             className="
-              rounded-lg bg-aiBlue px-4 py-2
+              rounded-lg bg-blue-600 px-4 py-2
               text-sm font-medium text-white
-              hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]
+              hover:bg-blue-700
+              hover:shadow-lg hover:shadow-blue-500/25
+              transition-all
             "
           >
             Add

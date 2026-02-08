@@ -7,8 +7,8 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen w-full bg-slate900 flex overflow-hidden">
-      
+    <div className="min-h-screen w-full bg-background flex overflow-hidden">
+
       {/* LEFT PANEL */}
       <div className="hidden lg:flex lg:w-1/2 shrink-0">
         <AuthLeftPanel />

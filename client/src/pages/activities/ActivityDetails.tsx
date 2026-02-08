@@ -91,7 +91,7 @@ const ActivityDetails = () => {
 
   if (!activity) {
     return (
-      <div className="p-6 text-center text-slate-400 fade-in">
+      <div className="p-6 text-center text-textSecondary fade-in">
         Activity not found 🚫
       </div>
     );

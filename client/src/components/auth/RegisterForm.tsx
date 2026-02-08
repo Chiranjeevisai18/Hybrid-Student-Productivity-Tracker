@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { refreshUser } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,7 +23,8 @@ const RegisterForm = () => {
 
       // Auto-login after register
       if (data.token) {
-        login(data.token);
+        localStorage.setItem("token", data.token);
+        await refreshUser();
         navigate("/dashboard");
       } else {
         navigate("/login");
@@ -42,18 +43,18 @@ const RegisterForm = () => {
       className="
         w-full max-w-md
         rounded-3xl
-        border border-aiBlue/30
-        bg-[#0B0F14]
+        border border-border
+        bg-card
         p-10
-        shadow-[0_0_60px_rgba(56,189,248,0.25)]
+        shadow-glow
       "
     >
       {/* Header */}
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-semibold text-white">
+        <h2 className="text-2xl font-semibold text-textPrimary">
           Create your account
         </h2>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-textSecondary">
           Start tracking your productivity today.
         </p>
       </div>
@@ -69,7 +70,7 @@ const RegisterForm = () => {
       <form className="space-y-5" onSubmit={handleSubmit}>
         {/* Name */}
         <div>
-          <label className="mb-1 block text-sm text-slate-300">
+          <label className="mb-1 block text-sm text-textSecondary">
             Name
           </label>
           <input
@@ -80,20 +81,20 @@ const RegisterForm = () => {
             placeholder="Your name"
             className="
               w-full rounded-lg
-              bg-[#020617]
+              bg-surfaceElevated
               px-4 py-2.5
-              text-sm text-white
-              placeholder-slate-500
+              text-sm text-textPrimary
+              placeholder-textMuted
               outline-none
-              ring-1 ring-white/10
-              focus:ring-blue-400
+              ring-1 ring-border
+              focus:ring-blue-500
             "
           />
         </div>
 
         {/* Email */}
         <div>
-          <label className="mb-1 block text-sm text-slate-300">
+          <label className="mb-1 block text-sm text-textSecondary">
             Email
           </label>
           <input
@@ -117,7 +118,7 @@ const RegisterForm = () => {
 
         {/* Password */}
         <div>
-          <label className="mb-1 block text-sm text-slate-300">
+          <label className="mb-1 block text-sm text-textSecondary">
             Password
           </label>
           <input
@@ -145,11 +146,11 @@ const RegisterForm = () => {
           disabled={loading}
           className="
             mt-6 w-full rounded-lg
-            bg-blue-500 py-2.5
+            bg-blue-600 py-2.5
             text-sm font-semibold text-white
             transition-all duration-200
-            hover:bg-blue-600
-            hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]
+            hover:bg-blue-700
+            hover:shadow-lg hover:shadow-blue-500/25
             disabled:opacity-60
           "
         >
@@ -158,11 +159,11 @@ const RegisterForm = () => {
       </form>
 
       {/* Footer */}
-      <div className="mt-6 text-center text-sm text-slate-400">
+      <div className="mt-6 text-center text-sm text-textSecondary">
         Already have an account?{" "}
         <Link
           to="/login"
-          className="text-blue-400 hover:underline"
+          className="text-blue-500 hover:underline"
         >
           Login
         </Link>

@@ -40,7 +40,7 @@ const GoalCard = ({ goal }: { goal: Goal }) => {
         className="
           absolute top-4 right-4
           rounded-lg p-2
-          text-slate-400
+          text-textSecondary
           hover:text-red-400
           hover:bg-red-500/10
           transition
