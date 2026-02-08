@@ -1,0 +1,15 @@
+.DS_Store
+node_modules
+/dist
+/build
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+id_rsa
+id_rsa.pub
+coverage/
+.vscode/
+*.log
