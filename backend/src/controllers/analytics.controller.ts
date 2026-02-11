@@ -91,6 +91,13 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
       (totalMinutes > 300 ? 40 : (totalMinutes / 300) * 40)
     );
 
+    // Map for frontend consistency (id vs _id, deadline vs endDate)
+    const formattedUpcomingGoals = upcomingGoals.map((g: any) => ({
+      id: g._id,
+      title: g.title,
+      deadline: g.endDate,
+    }));
+
     const result = {
       goalsCount: goals.length,
       totalActivities,
@@ -98,7 +105,7 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
       totalMinutes,
       activityCompletionRate,
       weeklyProductivity: weekData,
-      upcomingGoals,
+      upcomingGoals: formattedUpcomingGoals,
       productivityScore,
     };
 
