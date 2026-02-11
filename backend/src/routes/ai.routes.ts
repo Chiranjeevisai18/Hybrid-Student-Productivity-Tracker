@@ -3,6 +3,7 @@ import { auth } from "../middleware/auth";
 import { Chat } from "../models/Chat";
 import { getSuggestion } from "../controllers/ai.controller";
 import { generateAIResponse } from "../services/ai.service";
+import mongoose from "mongoose";
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.post("/suggest", auth, getSuggestion);
 // GET /chats - List recent chats
 router.get("/chats", auth, async (req: any, res) => {
   try {
-    const chats = await Chat.find({ userId: req.userId })
+    const chats = await Chat.find({ userId: new mongoose.Types.ObjectId(req.userId as string) })
       .sort({ updatedAt: -1 })
       .select("title updatedAt");
     res.json(chats);
@@ -28,7 +29,10 @@ router.get("/chats", auth, async (req: any, res) => {
 // GET /chats/:id - Get full chat history
 router.get("/chats/:id", auth, async (req: any, res) => {
   try {
-    const chat = await Chat.findOne({ _id: req.params.id, userId: req.userId });
+    const chat = await Chat.findOne({
+      _id: req.params.id,
+      userId: new mongoose.Types.ObjectId(req.userId as string)
+    });
     if (!chat) return res.status(404).json({ error: "Chat not found" });
     res.json(chat);
   } catch (error: any) {
@@ -43,7 +47,7 @@ router.post("/chats", auth, async (req: any, res) => {
 
     // 1. Create Chat
     const chat = new Chat({
-      userId: req.userId,
+      userId: new mongoose.Types.ObjectId(req.userId as string),
       title: message ? message.substring(0, 30) + "..." : "New Chat",
       messages: [],
     });
@@ -77,7 +81,10 @@ router.post("/chats", auth, async (req: any, res) => {
 router.post("/chats/:id/message", auth, async (req: any, res) => {
   try {
     const { message, context } = req.body;
-    const chat = await Chat.findOne({ _id: req.params.id, userId: req.userId });
+    const chat = await Chat.findOne({
+      _id: req.params.id,
+      userId: new mongoose.Types.ObjectId(req.userId as string)
+    });
 
     if (!chat) return res.status(404).json({ error: "Chat not found" });
 
@@ -105,7 +112,10 @@ router.post("/chats/:id/message", auth, async (req: any, res) => {
 // DELETE /chats/:id - Delete a chat
 router.delete("/chats/:id", auth, async (req: any, res) => {
   try {
-    const deleted = await Chat.findOneAndDelete({ _id: req.params.id, userId: req.userId });
+    const deleted = await Chat.findOneAndDelete({
+      _id: req.params.id,
+      userId: new mongoose.Types.ObjectId(req.userId as string)
+    });
     if (!deleted) return res.status(404).json({ error: "Chat not found" });
     res.json({ message: "Chat deleted" });
   } catch (error: any) {
