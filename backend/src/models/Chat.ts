@@ -12,7 +12,7 @@ const chatSchema = new mongoose.Schema({
     messages: [messageSchema],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-});
+}, { collection: "chats" });
 
 // Update timestamp on save
 chatSchema.pre("save", function (next) {
@@ -21,3 +21,4 @@ chatSchema.pre("save", function (next) {
 });
 
 export const Chat = mongoose.model("Chat", chatSchema);
+export default Chat;

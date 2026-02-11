@@ -32,6 +32,8 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
     const activities = await Activity.find({
       userId: new mongoose.Types.ObjectId(userId as string)
     });
+    // Debug logging for production visibility
+    console.log(`Analytics Debug [${userId}]: Found ${goals.length} goals and ${activities.length} activities.`);
 
     // Total activity duration
     const totalMinutes = activities.reduce((sum, a) => sum + (a.spentMinutes || 0), 0);
@@ -51,18 +53,34 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
     lastWeek.setDate(lastWeek.getDate() - 7);
 
     activities.forEach((a) => {
-      const date = new Date(a.createdAt);
-      if (date >= lastWeek) {
-        const key = date.toISOString().split("T")[0];
-        weekData[key] = (weekData[key] || 0) + (a.spentMinutes || 0);
+      try {
+        const date = new Date(a.createdAt || new Date());
+        if (isNaN(date.getTime())) return;
+
+        if (date >= lastWeek) {
+          const key = date.toISOString().split("T")[0];
+          weekData[key] = (weekData[key] || 0) + (a.spentMinutes || 0);
+        }
+      } catch (err) {
+        console.warn("Date parsing error in analytics:", err);
       }
     });
+
+    // Ensure weekData has entries for the last 7 days even if empty
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split("T")[0];
+      if (!weekData[key]) weekData[key] = 0;
+    }
 
     // Upcoming deadlines (next 5 upcoming goals)
     const upcomingGoals = goals
       .filter((g) => {
-        const d = new Date(g.endDate);
-        return d >= now;
+        try {
+          const d = new Date(g.endDate);
+          return !isNaN(d.getTime()) && d >= now;
+        } catch { return false; }
       })
       .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime())
       .slice(0, 5);

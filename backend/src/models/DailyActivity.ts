@@ -36,10 +36,7 @@ const DailyActivitySchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, collection: "daily_activities" }
 );
 
-export default mongoose.model(
-  "DailyActivity",
-  DailyActivitySchema
-);
+export default mongoose.model("DailyActivity", DailyActivitySchema);
