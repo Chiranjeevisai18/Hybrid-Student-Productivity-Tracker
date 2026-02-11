@@ -94,7 +94,16 @@ router.post("/chats/:id/message", auth, async (req: any, res) => {
 
     // 2. Call AI
     const historyText = chat.messages.map((m: any) => `${m.role}: ${m.content}`).join("\n");
-    const fullPrompt = `Context: ${JSON.stringify(context || {})}\n\nChat History:\n${historyText}\n\nUser: ${message}`;
+
+    // Safe context serialization
+    let contextStr = "{}";
+    try {
+      contextStr = JSON.stringify(context || {});
+    } catch (err) {
+      console.warn("Failed to serialize context:", err);
+    }
+
+    const fullPrompt = `Context: ${contextStr}\n\nChat History:\n${historyText}\n\nUser: ${message}`;
 
     const aiResponse = await generateAIResponse(fullPrompt);
 
